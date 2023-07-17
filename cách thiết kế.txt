@@ -1,0 +1,52 @@
+1. DataSourceConfig.java
+Lớp cấu hình này chịu trách nhiệm thiết lập nguồn dữ liệu và nhà máy quản lý thực thể trong ứng dụng. Nó bao gồm các phương pháp chính sau:
+
+appDataSource(): Định cấu hình nguồn dữ liệu chính bằng các thuộc tính có tiền tố là "app.datasource" từ cấu hình ứng dụng.
+entityManagerFactory(EntityManagerFactoryBuilder builder): Định cấu hình nhà máy quản lý thực thể bằng cách sử dụng làm appDataSource()nguồn dữ liệu và các thuộc tính có tiền tố là "spring.data.jpa.entity".
+securityDataSource(): Định cấu hình nguồn dữ liệu bảo mật bằng cách sử dụng các thuộc tính có tiền tố là "security.datasource" từ cấu hình ứng dụng.
+2. SecurityConfig.java
+Lớp cấu hình này xử lý các cấu hình liên quan đến bảo mật cho ứng dụng. Nó bao gồm các phương pháp chính sau:
+
+configure(AuthenticationManagerBuilder auth): Định cấu hình xác thực dựa trên JDBC bằng cách sử dụng nguồn dữ liệu bảo mật.
+configure(HttpSecurity http): Định cấu hình quy tắc ủy quyền và bảo mật cho các URL khác nhau trong ứng dụng. Nó chỉ định URL nào yêu cầu vai trò nào để truy cập và xác định chức năng đăng nhập và đăng xuất.
+3. LoginController.java
+Lớp trình điều khiển này xử lý các yêu cầu liên quan đến đăng nhập trong ứng dụng. Nó bao gồm các phương pháp chính sau:
+
+showMyLoginPage(): Xử lý yêu cầu GET tới URL "/showMyLoginPage" và trả về tên chế độ xem logic "login" để hiển thị trang đăng nhập.
+accessDenied(): Xử lý yêu cầu GET tới URL "/access-denied" và trả về tên chế độ xem logic "access-denied" để hiển thị trang bị từ chối truy cập.
+4. TicketController.java
+Lớp trình điều khiển này xử lý các yêu cầu liên quan đến vé trong ứng dụng. Nó bao gồm các phương pháp chính sau:
+
+listTickets(Model theModel): Xử lý yêu cầu GET tới URL "/tickets/list" và truy xuất tất cả vé từ dịch vụ bán vé. Nó thêm các vé vào mô hình và trả về tên chế độ xem logic "/tickets/list-tickets" để hiển thị danh sách các vé.
+showFormForAdd(Model theModel): Xử lý yêu cầu GET tới URL "/tickets/showFormForAdd" và chuẩn bị mô hình với một đối tượng Vé mới để thêm một vé mới. Nó trả về tên dạng xem logic "/tickets/ticket-form" để hiển thị biểu mẫu vé.
+showFormForUpdate(@RequestParam("ticketId") int theId, Model theModel): Xử lý yêu cầu GET tới URL "/tickets/showFormForUpdate" và truy xuất vé có ID được chỉ định từ dịch vụ bán vé. Nó thêm vé vào mô hình và trả về tên dạng xem logic "/tickets/ticket-form" để hiển thị biểu mẫu vé để cập nhật.
+saveTicket(@ModelAttribute("ticket") Ticket theTicket): Xử lý yêu cầu POST tới URL "/tickets/save" và lưu hoặc cập nhật vé bằng dịch vụ vé. Nó chuyển hướng đến URL "/tickets/list" để hiển thị danh sách vé được cập nhật.
+deleteTicket(@RequestParam("ticketId") int theId): Xử lý yêu cầu GET tới URL "/tickets/delete" và xóa vé có ID được chỉ định bằng dịch vụ vé. Nó chuyển hướng đến URL "/tickets/list" để hiển thị danh sách vé được cập nhật.
+5. Kho lưu trữ vé.java
+Giao diện kho lưu trữ Spring Data JPA này cung cấp các phương thức truy cập cơ sở dữ liệu cho thực thể Vé. Nó mở rộng giao diện JpaRepository và bao gồm các phương thức chính sau:
+
+findAllByOrderByIdAsc(): Truy xuất tất cả các vé và sắp xếp chúng theo ID của chúng theo thứ tự tăng dần.
+6. Vé.java
+Lớp thực thể này đại diện cho một Vé trong hệ thống quản lý vé. Nó bao gồm các thuộc tính quan trọng sau:
+
+id: Mã định danh duy nhất được tạo tự động cho vé.
+time: Thời điểm xuất vé.
+price: Giá vé.
+type: Loại vé.
+detail: Chi tiết bổ sung về vé.
+Nó bao gồm các hàm tạo, phương thức getter và setter cho các thuộc tính.
+
+7. TicketService.java
+Giao diện dịch vụ này xác định hợp đồng để thực hiện các hoạt động khác nhau liên quan đến vé. Nó bao gồm các phương pháp chính sau:
+
+getAllTicket(): Truy xuất danh sách tất cả các vé.
+getTicketById(int theId): Truy xuất một vé cụ thể theo ID của nó.
+save(Ticket theTicket): Lưu hoặc cập nhật một yêu cầu.
+deleteTicket(int theId): Xóa một vé.
+8. TicketServiceImpl.java
+Lớp triển khai dịch vụ này cung cấp việc triển khai giao diện TicketService. Nó bao gồm các phương pháp chính sau:
+
+getAllTicket(): Truy xuất tất cả các vé bằng TicketRepository.
+getTicketById(int theId): Truy xuất một vé theo ID của nó bằng cách sử dụng TicketRepository.
+save(Ticket theTicket): Lưu hoặc cập nhật vé bằng TicketRepository.
+deleteTicket(int theId): Xóa một vé bằng TicketRepository.
